@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login &#8211; MMP Admin</title>
+
+
+<link rel='stylesheet' id='ykt-bootstrap-css'  href='css/bootstrap.min.css?ver=4.7.3' type='text/css' media='all' />
+
+<link rel='stylesheet' id='ykt-custom-style-css'  href='css/unified.css' type='text/css' media='all' />
+
+</head>
+
+<body class="page-template page-template-custom-login page-template-custom-login-php page page-id-43">
+<div id="page" class="hfeed site">   
+
+	<div class="container">
+		<div id="top-header" class="col-md-12">
+			<div id="logo">
+				<a href="http://yktohmmp.com/newscan/"><img src="http://yktohmmp.com/newscan/wp-content/uploads/2016/02/yk-toh-logo.jpg"  height="39" width="268" alt="MMP Admin"/></a>
+			</div><!-- end of #logo -->
+		</div>
+	</div>
+  <div id="content-login" class="site-content container">
+      <div class="main-content-area">
+          <div class="row">
+	     <section class="aa_loginForm">
+		<h1 class="login-title">MM PORTAL</h1>
+		<div class="login-container col-xs-12">
+		  <form id="login" class="ajax-auth" action="login" method="post">
+		    <h1>Login</h1>
+		    <p class="status"></p>  
+		    <input type="hidden" id="security" name="security" value="1f95265ccd" /><input type="hidden" name="_wp_http_referer" value="/newscan/login/" />  
+		    <input id="username" type="text" class="required" name="username" placeholder="Username or Email">
+		    <input id="password" type="password" class="required" name="password" placeholder="Password">
+		    <label for="rememberme"><input name="rememberme" type="checkbox" id="rememberme" value="forever"> Remember Me</label>
+		    <input id="validate" class="submit_button" type="submit" value="Login">
+		  </form>
+		</div>
+		<a class="login-forgot text-link" href="http://yktohmmp.com/newscan/wp-login.php?action=lostpassword">Forgot your password? Click here to reset.</a>
+	</section>
+		<div class="md-overlay"></div>
+                </div><!-- close .row -->
+            </div><!-- close .container -->
+          </div>
+        </div><!-- close .site-content -->
+    </div><!-- #page -->
+<script src="js/jquery.js"> </script>
+<script>
+$(document).ready(function(){
+
+if (localStorage.getItem("userid") != null) { //alert(localStorage.getItem("userid") );
+   window.location.href = 'home.html';	
+}
+
+$("#validate").on("click", function(event){
+    event.preventDefault()
+    var user = $("#username").val(); 
+    var pass = $("#password").val(); 	
+    if(user != '' && pass != '') {
+    $.ajax({
+	  url:'http://yktohmmp.com/webservice/get_user.php',
+	  method:'post',	
+	  data:{username:user,passw:pass},
+          success:function(data){
+		var obj = $.parseJSON(data); 
+		if(obj.code == 200){
+ 		  localStorage.setItem("userid",obj.id);
+		  localStorage.setItem("usname",obj.name);
+		  window.location.href = 'home.html';	
+		} else{ 
+		  $(".status").show();
+		  $(".status").html(obj.status);		
+		}
+	}, 
+	  error:function(data){
+
+           alert('faiole');
+
+        }
+   });
+
+   } else {
+           alert('Fill the fields');
+	  }
+	});
+});
+</script>
+
+  </body>
+</html>

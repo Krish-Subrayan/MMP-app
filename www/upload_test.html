@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- refresh every 5mins -->
+<meta http-equiv="refresh" content="1800">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel='stylesheet' id='ykt-custom-style-css'  href='css/unified.css' type='text/css' media='all' />
+<link rel='stylesheet' id='ykt-bootstrap-css'  href='css/bootstrap.min.css?ver=4.7.3' type='text/css' media='all' />
+</head>
+<body class="page-template page-template-page-job-details page-template-page-job-details-php page page-id-68 page-child parent-pageid-55 logged-in">
+<div id="page" class="hfeed site mobile">
+    <div class="container">
+	<div class="row">
+	     <div id="top-header" class="col-md-12">
+		<div id="logo">
+			<a href="#" class="text-center"><img src="images/yktoh.png"  height="39" width="268" alt="MMP Admin"/></a>			
+  		</div><!-- end of #logo -->
+	      </div>
+	</div>
+    </div>
+	
+  <div id="content" class="site-content container">
+	<div class="header">
+		<a onclick=job_det() class="btn btn-primary btn-sm pull-right">Job Details Page</a>
+		<a onclick=red() class="btn btn-primary btn-sm pull-right">Show List of Jobs</a>
+	</div>
+    	<div class="row">
+          <div class="main-content-area">
+	        <div class="clearfix ">
+			<div id="primary" class="content-area col-sm-12">
+		<main id="main" class="site-main" role="main">
+							
+				<article id="post-job-details" class="post-68 page type-page status-publish hentry">
+					<div class="entry-content">
+						<!-- <div class="col-sm-12"> -->
+
+
+
+		   <div class="table-responsive text-center" id="table_content">
+
+<center id="statuss"> </center>
+
+					<button class="btn btn-primary" onclick="cameraTakePicture()" id = "cameraGetPicture">Take A Photo</button> 
+
+<br /><br />
+(Or)
+<br /><br />
+
+<input type="file" capture="camera" accept="image/*" id="cameraInput" name="cameraInput">
+
+
+
+  <button  class="btn btn-primary" id = "cameraGetPicture2">Select and upload</button>
+
+<br /> <br />
+
+
+ </center> 
+		</div>
+				</article>
+						</main><!-- #main -->
+	</div><!-- #primary -->
+	   <div class="md-overlay"></div>
+                </div><!-- close .row -->
+            </div><!-- close .container -->
+          </div>
+        </div><!-- close .site-content -->
+		<div id="footer-area">
+		<div class="scroll-to-top"><i class="fa fa-angle-up"></i></div>
+	</div>
+</div><!-- #page -->
+<script src="js/jquery.js"> </script>
+<script>
+$(document).ready(function(){
+
+$('#cameraInput').on('change', function(e){
+alert('inside');
+ $data = e.originalEvent.target.files[0];
+  $reader = new FileReader();
+  reader.onload = function(evt){
+  $('#your_img_id').attr('src',evt.target.result);
+  reader.readAsDaraUrl($data);
+  }
+});
+});
+</script>
+
+
+
+<script>
+var pictureSource;   // picture source
+var destinationType; // sets the format of returned value
+ 
+document.addEventListener("deviceready", onDeviceReady, false);
+ 
+function onDeviceReady() { //alert('test');
+    pictureSource = navigator.camera.PictureSourceType;
+    destinationType = navigator.camera.DestinationType;
+}
+ 
+function clearCache() {
+    navigator.camera.cleanup();
+}
+ 
+var retries = 0;
+function onCapturePhoto(fileURI) {
+    var win = function (r) {
+        clearCache();
+        retries = 0;
+        $("#statuss").html(r.response);
+	//alert( r.response);
+	//window.location.href="job.html";
+    }
+ 
+    var fail = function (error) {
+        if (retries == 0) {
+            retries ++
+            setTimeout(function() {
+                onCapturePhoto(fileURI)
+            }, 1000)
+        } else {
+            retries = 0;
+            clearCache();
+            alert('Ups. Something wrong happens!');
+        }
+    }
+ 
+    var options = new FileUploadOptions();
+    options.fileKey = "file";
+    options.fileName = fileURI.substr(fileURI.lastIndexOf('/') + 1);
+    options.mimeType = "image/jpeg";
+    var params = {}; // if we need to send parameters to the server request
+    params.nice_id = localStorage.getItem("nice_click_id");
+    params.value2 = "param";
+    options.chunkedMode = false;
+
+    options.params = params;
+    var ft = new FileTransfer();
+    ft.upload(fileURI, encodeURI("http://yktohmmp.com/webservice/get_taken_image.php"), win, fail, options);
+}
+ 
+function cameraTakePicture() {         $("#statuss").html('In Progress');
+    navigator.camera.getPicture(onCapturePhoto, onFail, {
+        quality: 100,
+        destinationType: destinationType.FILE_URI
+    });
+}
+ 
+function onFail(message) {
+            $("#statuss").html(message);
+}
+function red(){
+var urll="https://yktohmmp.com/tablet/";
+var ref = cordova.InAppBrowser.open(urll, '_blank', 'location=no');
+ref.addEventListener("loadstart", urlChanged);
+}
+function urlChanged(event) {
+url = event.url;
+var res = url.split("/");  //alert(url);
+
+if(jQuery.inArray("scan", res) != -1 || jQuery.inArray("scan2", res) != -1) {
+var job = getParameterByName('job'); 
+var action = getParameterByName('action'); 
+var status = getParameterByName('status'); 
+
+    scan(action,job,status);
+  } 
+}
+
+function getParameterByName(name) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+function scan(action,job_id,status)
+            { 
+var failed_page = 'qr_failed.html';
+        cordova.plugins.barcodeScanner.scan(
+                    function (result) { 
+                        if(!result.cancelled)
+                        {
+                            if(result.format == "QR_CODE")
+                            {
+                                  var value = result.text; 
+			 	  if(action == 'in' || action == "non_complete")
+				    {
+
+					$.ajax({
+					url:'https://yktohmmp.com/webservice/get_qr.php',
+					method:'post',
+					data:{job_nice_id:job_id,action_type:action,qr_code:value},
+					success:function(data){  //alert(data); 
+					   if(data == 'Scanned In'){
+						localStorage.setItem("nice_click_id",job_id);
+						//var urll = "https://yktohmmp.com/tablet/upload-photos/?job="+job_id;
+						var urll = "upload_photos.html";
+						//ref = cordova.InAppBrowser.open(urll, '_blank', 'location=no');
+						//ref.addEventListener("loadstart", urlChanged);
+						window.location.href=urll;
+					    } else { 
+                                                ref = cordova.InAppBrowser.open(failed_page, '_blank', 'location=no');
+						ref.addEventListener("loadstart", urlChanged);	
+				             }
+					},
+					error:function() {
+				
+						ref = cordova.InAppBrowser.open(failed_page, '_blank', 'location=no');
+						ref.addEventListener("loadstart", urlChanged);	
+					}
+
+
+				});
+
+
+                                 }
+ 	if(action == 'out' && status== null){
+		$.ajax({
+			url:'https://yktohmmp.com/webservice/set_scanout.php',
+			method:'post',
+			data:{job_nice_id:job_id,action_type:action,qr_code:value},
+			success:function(data){  
+				ref = cordova.InAppBrowser.open(failed_page, '_blank', 'location=no');
+				ref.addEventListener("loadstart", urlChanged);	
+
+		},
+		error:function() {
+
+			ref = cordova.InAppBrowser.open(failed_page, '_blank', 'location=no');
+			ref.addEventListener("loadstart", urlChanged);	
+		}
+
+
+		});
+
+                                 }
+
+ 				
+ if(action == 'out' && status!= null){
+		$.ajax({
+		url:'https://yktohmmp.com/webservice/set_none_complete.php',
+		method:'post',
+		data:{job_nice_id:job_id,action_type:action,qr_code:value},
+		success:function(data){ 
+			//alert(data); 
+			ref = cordova.InAppBrowser.open(failed_page, '_blank', 'location=no');
+			ref.addEventListener("loadstart", urlChanged);	
+
+		},
+		error:function() {
+
+			ref = cordova.InAppBrowser.open(failed_page, '_blank', 'location=no');
+			ref.addEventListener("loadstart", urlChanged);	
+		}
+
+
+		});
+                                 }
+
+
+                            }
+                            else {
+
+				  ref =  cordova.InAppBrowser.open(failed_page, '_blank', 'location=no');
+				  ref.addEventListener("loadstart", urlChanged);	
+
+                            }
+                        } 
+			else {
+
+				  ref =  cordova.InAppBrowser.open(failed_page, '_blank', 'location=no');
+				  ref.addEventListener("loadstart", urlChanged);	
+
+                            }
+                    },
+                    function (error) {
+          			ref = cordova.InAppBrowser.open(failed_page, '_blank', 'location=no');
+				ref.addEventListener("loadstart", urlChanged);	
+    }
+               );
+            }
+
+
+
+document.getElementById("cameraGetPicture2").addEventListener("click", cameraGetPicture);
+
+function cameraGetPicture() {  $("#statuss").html('In Progress');
+   navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
+      destinationType: Camera.DestinationType.DATA_URL,
+      sourceType: Camera.PictureSourceType.PHOTOLIBRARY
+   });
+
+   function onSuccess(fileURI) {
+
+    var win = function (r) {
+        clearCache();
+        retries = 0;
+        $("#statuss").html(r.response);
+	//alert( r.response);
+	//window.location.href="job.html";
+    }
+ 
+    var fail = function (error) {
+        if (retries == 0) {
+            retries ++
+            setTimeout(function() {
+                onCapturePhoto(fileURI)
+            }, 1000)
+        } else {
+            retries = 0;
+            clearCache();
+            alert('Ups. Something wrong happens!');
+        }
+    }
+ 
+    var options = new FileUploadOptions();
+    options.fileKey = "file";
+    options.fileName = fileURI.substr(fileURI.lastIndexOf('/') + 1);
+    options.mimeType = "image/jpeg";
+    var params = {}; // if we need to send parameters to the server request
+    params.nice_id = localStorage.getItem("nice_click_id");
+    params.value2 = "param";
+    options.chunkedMode = false;
+
+    options.params = params;
+    var ft = new FileTransfer();
+    ft.upload(fileURI, encodeURI("http://yktohmmp.com/webservice/get_taken_image.php"), win, fail, options);
+   }
+
+   function onFail(message) {
+      alert('Failed because: ' + message);
+   }
+
+}
+
+function job_det() {
+
+var id = localStorage.getItem("nice_click_id")
+var page = "https://yktohmmp.com/tablet/job-details/?job="+id;
+var ref =  cordova.InAppBrowser.open(page, '_blank', 'location=no');
+ref.addEventListener("loadstart", urlChanged);
+}
+</script>
+</body>
+</html>

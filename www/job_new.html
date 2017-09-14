@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- refresh every 5mins -->
+<meta http-equiv="refresh" content="1800">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel='stylesheet' id='ykt-bootstrap-css'  href='css/bootstrap.min.css?ver=4.7.3' type='text/css' media='all' />
+<link rel='stylesheet' id='ykt-custom-style-css'  href='css/unified.css' type='text/css' media='all' />
+</head>
+<body class="page-template page-template-page-job-details page-template-page-job-details-php page page-id-68 page-child parent-pageid-55 logged-in">
+<div id="page" class="hfeed site mobile">
+    <div class="container">
+	<div class="row">
+	     <div id="top-header" class="col-md-12">
+		<div id="logo">
+			<a href="#" class="text-center"><img src="images/yktoh.png"  height="39" width="268" alt="MMP Admin"/></a>			
+			<span class="pull-right">Mechanic:<strong id="user_name"></strong></span>
+  		</div><!-- end of #logo -->
+	      </div>
+	</div>
+    </div>
+	
+  <div id="content" class="site-content container">
+	<div class="header">
+		<h1 class="entry-title">Job Details</h1>
+		<a href="home.html" class="btn btn-primary btn-sm pull-right">Show List of Jobs</a>
+	</div>
+    	<div class="row">
+          <div class="main-content-area">
+	        <div class="clearfix ">
+			<div id="primary" class="content-area col-sm-12">
+		<main id="main" class="site-main" role="main">
+							
+				<article id="post-job-details" class="post-68 page type-page status-publish hentry">
+					<div class="entry-content">
+						<!-- <div class="col-sm-12"> -->
+							
+		<div class="table-responsive" id="table_content">
+			
+		</div>
+		</div>
+				</article>
+						</main><!-- #main -->
+	</div><!-- #primary -->
+	   <div class="md-overlay"></div>
+                </div><!-- close .row -->
+            </div><!-- close .container -->
+          </div>
+        </div><!-- close .site-content -->
+		<div id="footer-area">
+		<div class="scroll-to-top"><i class="fa fa-angle-up"></i></div>
+	</div>
+</div><!-- #page -->
+<script src="js/jquery.js"> </script>
+<script>
+if (localStorage.getItem("nice_click_id") == null) { //alert(localStorage.getItem("userid") );
+   window.location.href = 'login.html';	
+}
+
+function get_eq(data) {
+loader_show();
+$.ajax({
+	  url:'http://yktohmmp.com/webservice/get_job_his.php',
+	  method:'post',
+	  data:{nice_id:data,page:'history-report'},
+          success:function(data){   loader_hide();
+		     $("#table_content").html('');	
+		     $("#table_content").append(data);
+	
+	 }, 
+	  error:function(data){ loader_hide();
+           alert('failed to fetch data');
+        }
+   });
+
+
+}
+
+
+function get_eq_pre(data) {
+loader_show();
+$.ajax({
+	  url:'http://yktohmmp.com/webservice/get_preview.php',
+	  method:'post',
+	  data:{nice_id:data,page:'history-report'},
+          success:function(data){   loader_hide();
+		     $("#table_content").html('');	
+		     $("#table_content").append(data);
+	
+	 }, 
+	  error:function(data){ loader_hide();
+           alert('failed to fetch data');
+        }
+   });
+
+
+
+}
+
+
+function get_report(data) {
+		     $("#table_content").html('');	
+		     loader_show();	
+$.ajax({
+	  url:'http://yktohmmp.com/webservice/get_reports.php',
+	  method:'post',
+	  data:{nice_id:data,page:'reports'},
+          success:function(data){  loader_hide();
+		     $("#table_content").html('');	
+		     $("#table_content").append(data);
+	
+	 }, 
+	  error:function(data){ loader_hide();
+           alert('failed to fetch data');
+        }
+   });
+
+
+
+}
+
+
+function get_request(data) { 
+		    loader_show();	
+$.ajax({
+	  url:'http://yktohmmp.com/webservice/get_request.php',
+	  method:'post',
+	  data:{nice_id:data},
+          success:function(data){   loader_hide();
+		     $("#table_content").html('');	
+		     $("#table_content").append(data);
+	
+	 }, 
+	  error:function(data){  loader_hide();
+           alert('failed to fetch data');
+        }
+   });
+
+
+
+}
+
+
+
+
+$(document).ready(function(){
+var nice_id = localStorage.getItem("nice_click_id");
+loader_show();
+var files = [];
+var i = 0;
+$.ajax({
+	  url:'http://yktohmmp.com/webservice/get_job.php',
+	  method:'post',
+	  data:{nice_id:nice_id,page:''},
+          success:function(data){  	loader_hide();
+		     $("#table_content").html(data);
+	
+	 }, 
+	  error:function(data){loader_hide();
+           alert('failed to fetch data');
+        }
+   });
+
+$(document).on('change', 'input[type=file]', function(e){
+
+  files = event.target.files;
+	i++;
+});
+
+
+$(document).on('click','#submit_after_img_upload',function(e){
+
+  event.stopPropagation(); // Stop stuff happening
+    event.preventDefault(); // Totally stop stuff happening
+   var data = new FormData();
+    $.each(files, function(key, value)
+    {
+        data.append(key, value); 
+    });
+
+
+console.log(data);
+        submitForm(event, data);
+        
+	});
+});
+
+function submitForm(event, data)
+{
+  // Create a jQuery object from the form
+
+    $form = $(event.target); 
+
+    // Serialize the form data
+    var formData = $form.serialize();
+
+    // You should sterilise the file names
+    $.each(data.files, function(key, value)
+    {
+        formData = formData + '&filenames[]=' + value;
+    });
+
+    $.ajax({
+        url: 'http://yktohmmp.com/webservice/get_upload.php',
+        type: 'POST',
+        data: formData,
+        cache: false,
+        success: function(data, textStatus, jqXHR)
+        {
+            if(typeof data.error === 'undefined')
+            {
+                // Success so call function to process the form
+		alert(data);
+                console.log('SUCCESS: ' + data);
+            }
+            else
+            {
+                // Handle errors here
+                console.log('ERRORS: ' + data.error);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown)
+        {
+            // Handle errors here
+            console.log('ERRORS: ' + textStatus);
+        },
+        complete: function()
+        {
+            // STOP LOADING SPINNER
+        }
+    });
+}
+
+
+function loader_show(){
+
+    var div = "<div id='loader_ajax_maxpay' style='position: fixed;left: 0px;top: 0px;width: 100%;height: 100%;z-index: 9999;background: url(images/ajax-loader.gif) 50% 50% no-repeat rgba(0,0,0,0.4);'> </div>";
+   $('body').append(div); 
+    
+}
+function loader_hide(){
+    document.getElementById("loader_ajax_maxpay").remove();
+}  
+</script>
+<script src="js/app.js"></script>
+<script>
+$(document).ready(function(){
+$(document).on('change','#form_list', function(){ 
+		//alert($(this).val());
+		$(".form-list-error").remove();
+
+		var table_remove = $('.report-form');
+		if ( table_remove.length ) {
+			$('#capture_report').find('.report-form').addClass('remove-table');
+
+			//$('#report').css('display', 'none');
+			//$('.remove-table').css('display', 'none');
+
+			var form_id = $(this).val();
+			var form_table = $('#'+form_id);
+			if ( form_table.length ) {
+				form_table.removeClass('remove-table');
+				//$('#report').show();
+				$('#capture_report').show();
+			}
+		}
+	});
+
+      });
+</script>
+<script type="text/javascript" src="cordova.js"></script>
+
+</body>
+</html>

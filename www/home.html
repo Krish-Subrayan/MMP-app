@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- refresh every 5mins -->
+<meta http-equiv="refresh" content="1800">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Job List &#8211; MMP Admin</title>
+
+<link rel='stylesheet' id='ykt-bootstrap-css'  href='css/bootstrap.min.css?ver=4.7.3' type='text/css' media='all' />
+
+<link rel='stylesheet' id='ykt-custom-style-css'  href='css/unified.css' type='text/css' media='all' />
+</head>
+<body class="page-template page-template-page-tablet page-template-page-tablet-php page page-id-55 page-parent logged-in">
+<div id="page" class="hfeed site mobile">
+	
+	<div class="container">
+		<div class="row">
+			<div id="top-header" class="col-md-12">
+							
+					<div id="logo">
+						<a href="http://yktohmmp.com/newscan/"><img src="http://yktohmmp.com/newscan/wp-content/uploads/2016/02/yk-toh-logo.jpg"  height="39" width="268" alt="MMP Admin"/></a>
+						<span class="pull-right">Mechanic: <strong id="user_name"></strong></span>
+					</div><!-- end of #logo -->
+			</div>
+		</div>
+	</div>
+	
+  <div id="content" class="site-content container">
+		<div class="header">
+			<h1 class="entry-title">Job List</h1>
+			      
+		</div>
+    <div class="row">
+      <!-- <div class="container main-content-area"> -->
+      <div class="main-content-area">        <div class="clearfix ">
+          		<div id="primary" class="content-area col-sm-12">
+		<main id="main" class="site-main" role="main">
+		<article id="post-tablet" class="post-55 page type-page status-publish hentry">
+					<div class="entry-content">
+						<div class="col-sm-12">
+							<div id="table-mechanic" class="table-responsive">
+								<div>
+								  <table width="100%" class="table mechanic-job-list">
+									<thead>
+										<tr>
+											<th class="text-center">ID</th>
+											<th class="text-left">Company<br>(Address)</th>
+											<th class="text-left">Name<br>(Contact)</th>
+											<th class="text-center">Service Date</th>
+											<th class="text-center">Action</th>
+											<th class="text-center">Details/Status</th>
+										</tr>
+									  </thead>
+									<tbody id="table_content">
+									</tbody>
+			 </table>
+		     </div>
+		</div>
+
+  		<div class="button-area row">
+			<div class="col-sm-12">
+				<a href="#" onclick="logout()" class="btn btn-primary btn-lg">Logout</a>
+			</div>
+		</div>
+	 </div>
+					</div>
+				</article>
+						</main><!-- #main -->
+	</div><!-- #primary -->
+									<div class="md-overlay"></div>
+                </div><!-- close .row -->
+            </div><!-- close .container -->
+          </div>
+        </div><!-- close .site-content -->
+		<div id="footer-area">
+		<div class="scroll-to-top"><i class="fa fa-angle-up"></i></div>
+	</div>
+</div><!-- #page -->
+
+<script src="js/jquery.js"> </script>
+
+<script>
+function logout() {
+
+ localStorage.removeItem('userid');
+ window.location.href ='login.html';
+
+}
+
+$(document).ready(function(){
+
+if (localStorage.getItem("userid") == null) { //alert(localStorage.getItem("userid") );
+   window.location.href = 'login.html';	
+}
+	
+var table_data = '';
+var user_id = localStorage.getItem("userid");
+$.ajax({
+	  url:'https://yktohmmp.com/webservice/get_mech.php',
+	  method:'post',
+	  data:{mechid:user_id},
+          success:function(data){  	
+		var obj = $.parseJSON(data);
+                $.map(obj, function(value,index){ 
+		        table_data +='<tr><td style="cursor:pointer;color:blue;" onclick=pass_to_job("'+value.id +'")>'+value.id +'</td>';
+			table_data +='<td class="text-left">'+value.company +'</td>';
+			table_data +='<td class="text-left">'+value.name +'</td>';
+			table_data +='<td class="text-center">'+value.date +'</td>';
+			table_data +='<td class="text-center">'+value.action +'</td>';
+			table_data +='<td class="text-center">'+value.status +'</td></tr>';
+	
+               });
+	     $("#table_content").append(table_data);
+	
+	 }, 
+	  error:function(data){
+           alert('failed to fetch data');
+        }
+   });
+});
+
+/*function pass_to_job(id){
+
+ 		  localStorage.setItem("nice_click_id",id);
+		  //window.location.href="job.html";
+		  var urll = "https://yktohmmp.com/tablet/job-details/?job="+id;
+		  ref = cordova.InAppBrowser.open(urll, '_blank', 'location=no');
+}*/
+</script>
+
+<script src="js/app.js"></script>
+<script type="text/javascript" src="cordova.js"></script>
+
+
+
+</body>
+</html>
+
